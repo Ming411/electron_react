@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React from 'react';
+import styled from 'styled-components';
+import 'bootstrap/dist/css/bootstrap.min.css';
+// 自定义左侧容器
+let LeftDiv = styled.div.attrs({
+  className: 'col-3 left-panel'
+  // 这里编写属性
+})`
+  /* 这里编写具体样式 */
+  background-color: pink;
+  min-height: 100vh;
+`;
+let RightDiv = styled.div.attrs({
+  className: 'col-9 right-panel'
+})`
+  min-height: 100vh;
+  background-color: #ccc;
+`;
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App container-fluid px-0'>
+      <div className='row no-gutters'>
+        <LeftDiv>left</LeftDiv>
+        <RightDiv>right</RightDiv>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
