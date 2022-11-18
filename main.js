@@ -12,6 +12,7 @@ app.on('ready', () => {
       contextIsolation: false
     }
   });
+  mainWin.webContents.openDevTools();
   const urlLocation = isDev ? 'http://localhost:3000' : 'myUrl';
   mainWin.loadURL(urlLocation);
 });
