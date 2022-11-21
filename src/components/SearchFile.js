@@ -24,13 +24,18 @@ const SearchFile = ({title, onSearch}) => {
   const closeSearch = () => {
     setSearchActive(false);
     setValue('');
+
+    // 关闭搜索按钮时
+    onSearch('');
   };
-  if (enterPressed && searchActive) {
-    onSearch(value);
-  }
-  if (escPressed && searchActive) {
-    closeSearch();
-  }
+  useEffect(() => {
+    if (enterPressed && searchActive) {
+      onSearch(value);
+    }
+    if (escPressed && searchActive) {
+      closeSearch();
+    }
+  });
 
   /* useEffect(() => {
     const searchHandle = e => {

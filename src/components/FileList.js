@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileAlt, faFileEdit, faTrashAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
@@ -22,14 +22,31 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
   const closeFn = () => {
     setEditItem(false);
     setValue('');
+    // 新建时按esc 退出并关闭
+    const currentFile = files.find(file => file.id === editItem);
+    if (currentFile.isNew) {
+      deleteFile(currentFile.id);
+    }
   };
-  if (enterPressed && editItem) {
-    saveFile(editItem, value);
-    closeFn();
-  }
-  if (escPressed && editItem) {
-    closeFn();
-  }
+
+  useEffect(() => {
+    const newFile = files.find(file => file.isNew);
+    if (newFile) {
+      setEditItem(newFile.id);
+      setValue(newFile.title);
+    }
+  }, [files]);
+
+  useEffect(() => {
+    // 回车 and 退出, 并且不能为空
+    if (enterPressed && editItem && value.trim() !== '') {
+      saveFile(editItem, value);
+      closeFn();
+    }
+    if (escPressed && editItem) {
+      closeFn();
+    }
+  });
   /* useEffect(() => {
     const keyboardHandle = ev => {
       let {keyCode} = ev;
@@ -52,7 +69,7 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
       {files.map(file => {
         return (
           <li className='list-group-item d-flex align-items-center' key={file.id}>
-            {file.id !== editItem && (
+            {file.id !== editItem && !file.isNew && (
               <>
                 <span style={{marginRight: '10px'}}>
                   <FontAwesomeIcon icon={faFileAlt}></FontAwesomeIcon>
@@ -78,7 +95,7 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
                 </span>
               </>
             )}
-            {file.id === editItem && (
+            {(file.id === editItem || file.isNew) && (
               // 编辑状态
               <>
                 <input

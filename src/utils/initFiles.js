@@ -14,7 +14,7 @@ const initFiles = [
   {
     id: '3',
     title: '标题3',
-    body: '‘前端前端”',
+    body: '前端前端',
     createTime: '12345678'
   }
 ];
