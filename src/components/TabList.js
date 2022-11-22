@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -41,12 +40,12 @@ const TabList = ({files, activeItem, unSaveItems, clickItem, closeItem}) => {
     <TabUl>
       {files.map(file => {
         // 定义未保存状态状态
-        let unSaveMark = unSaveItems.includes(file.id);
+        const unSaveMark = unSaveItems.includes(file.id);
         // 高亮类名
-        let finalClass = classnames({
+        const finalClass = classnames({
           'nav-link': true,
           active: activeItem === file.id,
-          unSaveMark: unSaveMark
+          unSaveMark
         });
         return (
           <li className='nav-item' key={file.id}>

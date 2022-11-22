@@ -5,7 +5,7 @@ import {faFileAlt, faFileEdit, faTrashAlt, faTimes} from '@fortawesome/free-soli
 import PropTypes from 'prop-types';
 import useKeyHandler from '../hooks/useKeyHandler';
 
-let GroupUl = styled.ul.attrs({
+const GroupUl = styled.ul.attrs({
   className: 'list-group list-group-flush'
 })`
   li {
@@ -23,11 +23,19 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
     setEditItem(false);
     setValue('');
     // 新建时按esc 退出并关闭
-    const currentFile = files.find(file => file.id === editItem);
-    if (currentFile.isNew) {
+    /*    const currentFile = files.find(file => file.id === editItem);
+    if (currentFile && currentFile.isNew) {
       deleteFile(currentFile.id);
-    }
+    } */
   };
+
+  // 新建未完成又去编辑了其他文件,需要删除未新建完成的文件
+  useEffect(() => {
+    const newFile = files.find(file => file.isNew);
+    if (newFile && editItem !== newFile.id) {
+      deleteFile(newFile.id);
+    }
+  }, [editItem]);
 
   useEffect(() => {
     const newFile = files.find(file => file.isNew);
@@ -40,7 +48,8 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
   useEffect(() => {
     // 回车 and 退出, 并且不能为空
     if (enterPressed && editItem && value.trim() !== '') {
-      saveFile(editItem, value);
+      const file = files.find(file => file.id === editItem);
+      saveFile(editItem, value, file.isNew);
       closeFn();
     }
     if (escPressed && editItem) {
@@ -78,6 +87,7 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
                   className='col-8'
                   onClick={() => {
                     editFile(file.id);
+                    closeFn(); // 编辑时打开其他文件，关闭编辑操作
                   }}
                 >
                   {file.title}

@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes, faSearch} from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import useKeyHandler from '../hooks/useKeyHandler';
-let SearchDiv = styled.div.attrs({
+const SearchDiv = styled.div.attrs({
   className: 'd-flex align-items-center justify-content-between'
 })`
   border-bottom: 1px solid #fff;

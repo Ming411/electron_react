@@ -1,6 +1,8 @@
 const {app, BrowserWindow} = require('electron');
 // 区分环境
 const isDev = require('electron-is-dev');
+const Store = require('electron-store');
+Store.initRenderer();
 let mainWin = null;
 app.on('ready', () => {
   mainWin = new BrowserWindow({
@@ -15,4 +17,7 @@ app.on('ready', () => {
   mainWin.webContents.openDevTools();
   const urlLocation = isDev ? 'http://localhost:3000' : 'myUrl';
   mainWin.loadURL(urlLocation);
+
+  require('@electron/remote/main').initialize();
+  require('@electron/remote/main').enable(mainWin.webContents);
 });
