@@ -27,3 +27,15 @@ export const renameFile = (path, newPath) => {
 export const deleteFile = path => {
   return fs.unlink(path);
 };
+
+// 循环查找父节点item项
+export const getParentNode = (node, parentClassName) => {
+  let currentEle = node;
+  while (currentEle !== null) {
+    if (currentEle.classList.contains(parentClassName)) {
+      return currentEle;
+    }
+    currentEle = currentEle.parentNode;
+  }
+  return false;
+};

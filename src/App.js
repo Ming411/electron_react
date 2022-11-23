@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {v4} from 'uuid';
@@ -11,8 +11,10 @@ import FileList from './components/FileList';
 import ButtonItem from './components/ButtonItem';
 import TabList from './components/TabList';
 import {mapArr, objToArr, readFile, writeFile, renameFile, deleteFile} from './utils/helper';
+import useIpcRenderer from './hooks/useIpcRenderer';
 
 const path = window.require('path');
+const {ipcRenderer} = window.require('electron');
 const remote = window.require('@electron/remote');
 const Store = window.require('electron-store');
 const fileStore = new Store({name: 'fileInfo'});
@@ -131,19 +133,21 @@ const App = () => {
   /* 编辑markdown */
   const changeFile = (id, newValue) => {
     // 将其添加到未保存文件
-    if (!unSaveIds.includes(id)) {
-      setUnSaveIds([...unSaveIds, id]);
-    }
-    // 更新后生成新的files
-    /*     const newFiles = files.map(file => {
+    if (newValue !== files[id].body) {
+      if (!unSaveIds.includes(id)) {
+        setUnSaveIds([...unSaveIds, id]);
+      }
+      // 更新后生成新的files
+      /*     const newFiles = files.map(file => {
       if (file.id === id) {
         file.body = newValue;
       }
       return file;
     });
     setFiles(newFiles); */
-    const newFile = {...files[id], body: newValue};
-    setFiles({...files, [id]: newFile});
+      const newFile = {...files[id], body: newValue};
+      setFiles({...files, [id]: newFile});
+    }
   };
   /* 左侧删除文件项 */
   const deleteItem = id => {
@@ -286,6 +290,13 @@ const App = () => {
         }
       });
   };
+  // 主进程与渲染进程之间通信
+  useIpcRenderer({
+    'execute-create-file': createFile,
+    'execute-import-file': importFile,
+    'execute-save-file': saveCurrentFile
+  });
+
   return (
     <div className='App container-fluid'>
       <div className='row no-gutters'>
@@ -303,7 +314,7 @@ const App = () => {
           </div>
         </LeftDiv>
         <RightDiv className='px-0'>
-          <button onClick={saveCurrentFile}>保存</button>
+          {/* <button onClick={saveCurrentFile}>保存</button> */}
           {activeFile && (
             <>
               <TabList

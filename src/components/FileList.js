@@ -4,9 +4,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileAlt, faFileEdit, faTrashAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import useKeyHandler from '../hooks/useKeyHandler';
-
+import useContextMenu from '../hooks/useContextMenu';
+import {getParentNode} from '../utils/helper';
 const GroupUl = styled.ul.attrs({
-  className: 'list-group list-group-flush'
+  className: 'list-group list-group-flush menu-box'
 })`
   li {
     color: #fff;
@@ -29,6 +30,26 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
     } */
   };
 
+  /* 定制右键菜单 */
+  const contextMenuTmp = [
+    {
+      label: '重命名',
+      click() {
+        const retNode = getParentNode(currentEle.current, 'menu-item');
+        // console.log(currentEle.current);
+        // console.dir(retNode);
+        setEditItem(retNode.dataset.id);
+      }
+    },
+    {
+      label: '删除',
+      click() {
+        const retNode = getParentNode(currentEle.current, 'menu-item');
+        deleteFile(retNode.dataset.id);
+      }
+    }
+  ];
+  const currentEle = useContextMenu(contextMenuTmp, '.menu-box');
   // 新建未完成又去编辑了其他文件,需要删除未新建完成的文件
   useEffect(() => {
     const newFile = files.find(file => file.isNew);
@@ -77,7 +98,12 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
     <GroupUl>
       {files.map(file => {
         return (
-          <li className='list-group-item d-flex align-items-center' key={file.id}>
+          <li
+            className='list-group-item d-flex align-items-center menu-item'
+            key={file.id}
+            data-id={file.id}
+            data-title={file.title}
+          >
             {file.id !== editItem && !file.isNew && (
               <>
                 <span style={{marginRight: '10px'}}>
@@ -92,7 +118,7 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
                 >
                   {file.title}
                 </span>
-                <span
+                {/* <span
                   className='col-2'
                   onClick={() => {
                     setEditItem(file.id);
@@ -102,7 +128,7 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
                 </span>
                 <span className='col-2' onClick={() => deleteFile(file.id)}>
                   <FontAwesomeIcon icon={faTrashAlt}></FontAwesomeIcon>
-                </span>
+                </span> */}
               </>
             )}
             {(file.id === editItem || file.isNew) && (
@@ -115,9 +141,9 @@ const FileList = ({files, editFile, saveFile, deleteFile}) => {
                     setValue(e.target.value);
                   }}
                 />
-                <span className='col-2' onClick={closeFn}>
+                {/* <span className='col-2' onClick={closeFn}>
                   <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
-                </span>
+                </span> */}
               </>
             )}
           </li>

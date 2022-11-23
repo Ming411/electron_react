@@ -14,6 +14,7 @@ module.exports = {
     'object-curly-spacing': 'off',
     semi: 'off',
     'no-unused-vars': 'off',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'space-before-function-paren': 'off'
   }
 };
